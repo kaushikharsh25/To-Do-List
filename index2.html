@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> To-Do List</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #153677, #4e085f);
+        }
+
+        .todo-app {
+            width: 100%;
+            max-width: 540px;
+            background: #fff;
+            padding: 40px 30px 70px;
+            border-radius: 50px;
+            position: relative;
+        }
+
+        .todo-app h2 {
+            color: #002765;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .todo-app h2 img {
+            width: 30px;
+            margin-left: 10px;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #edeef0;
+            border-radius: 30px;
+            padding-left: 20px;
+            margin-bottom: 25px;
+        }
+
+        input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 10px;
+            font-weight: 14px;
+        }
+
+        button {
+            border: none;
+            outline: none;
+            padding: 16px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 30px;
+        }
+
+        .delete-button {
+            background: #ff5945;
+            color: #fff;
+            margin-right: 5px;
+        }
+
+        .check-all-button {
+            background: #ff5945;
+            color: #fff;
+        }
+
+        ul {
+            margin-bottom: 80px; /* Adjust as needed */
+        }
+
+        ul li {
+            list-style: none;
+            font-size: 17px;
+            padding: 12px 8px 12px 50px;
+            user-select: none;
+            cursor: pointer;
+            position: relative;
+        }
+
+        ul li::before {
+            content: '';
+            position: absolute;
+            height: 28px;
+            width: 28px;
+            border-radius: 50%;
+            background-image: url(unchecked.png);
+            background-size: cover;
+            background-position: center;
+            top: 12px;
+            left: 8px;
+        }
+
+        ul li.checked {
+            color: #777;
+            text-decoration: line-through;
+        }
+
+        ul li.checked::before {
+            background-image: url(checked.png);
+        }
+
+        ul li span {
+            position: absolute;
+            right: 0;
+            top: 5px;
+            width: 40px;
+            height: 40px;
+            font-size: 22px;
+            line-height: 40px;
+            text-align: center;
+            border-radius: 50%;
+        }
+
+        ul li span:hover {
+            background-color: #edeef0;
+        }
+
+        /* Add styles for the buttons at the end of the todo container */
+        .todo-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="todo-app">
+        <h2>To-do List <img src="icon.png"></h2>
+        <div class="row">
+            <input type="text" id="input-box" placeholder="Add your Text">
+            <button onclick="addTask()">Add</button>
+        </div>
+        <ul id="list-container">
+            <!-- Tasks will be added here dynamically -->
+        </ul>
+        <div class="todo-buttons">
+            <button class="delete-button" onclick="deleteAll()">Delete All</button>
+            <label><input type="checkbox" id="check-all" onclick="checkAll()" class="check-all-button">Check All</label>
+        </div>
+    </div>
+    <script>
+        const inputBox = document.getElementById("input-box");
+        const listContainer = document.getElementById("list-container");
+        const checkAllCheckbox = document.getElementById("check-all");
+
+        function addTask() {
+            if (inputBox.value === "") {
+                alert("Please enter a task");
+            } else {
+                let li = document.createElement("li");
+                li.innerHTML = inputBox.value;
+                listContainer.appendChild(li);
+                let span = document.createElement("span");
+                span.innerHTML = "\u00d7";
+                li.appendChild(span);
+            }
+            inputBox.value = "";
+            store();
+        }
+
+        function deleteAll() {
+            listContainer.innerHTML = "";
+            store();
+        }
+
+        function checkAll() {
+            const tasks = document.querySelectorAll("#list-container li");
+            const isChecked = checkAllCheckbox.checked;
+            tasks.forEach((task) => {
+                task.classList.toggle("checked", isChecked);
+            });
+            store();
+        }
+
+        listContainer.addEventListener("click", function (e) {
+            if (e.target.tagName === "LI") {
+                e.target.classList.toggle("checked");
+                store();
+            } else if (e.target.tagName === "SPAN") {
+                e.target.parentElement.remove();
+                store();
+            }
+        }, false);
+
+        function store() {
+            localStorage.setItem("data", listContainer.innerHTML);
+        }
+
+        function showtask() {
+            listContainer.innerHTML = localStorage.getItem("data");
+        }
+
+        showtask();
+    </script>
+</body>
+</html>
